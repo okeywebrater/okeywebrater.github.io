@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>РАМОН СЫН ШЛЮХИ?</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            overflow: hidden;
+            cursor: none;
+            user-select: none;
+        }
+        h1 {
+            font-size: 4em;
+            margin-top: 10vh;
+            color: #fff;
+        }
+        .wheel-container {
+            position: relative;
+            width: 420px;
+            height: 420px;
+            margin: 40px auto;
+        }
+        #wheel {
+            width: 420px;
+            height: 420px;
+            background: conic-gradient(#00ff00 0% 99%, #ff0000 99% 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 40px #fff;
+            transition: transform 4s cubic-bezier(0.22, 0.68, 0.35, 1);
+            position: relative;
+        }
+        .label-yes {
+            position: absolute;
+            top: 80%; /* Чуть ниже центра (снизу) */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4.5em;
+            color: #000;
+            text-shadow: 0 0 20px #fff;
+            z-index: 5;
+        }
+        .label-no {
+            position: absolute;
+            top: 20%; /* Чуть выше центра (сверху) */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5em;
+            color: #fff;
+            text-shadow: 0 0 10px #000;
+            z-index: 5;
+        }
+        .arrow {
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 80px;
+            color: #fff;
+            text-shadow: 0 0 20px #fff;
+            z-index: 10;
+        }
+        button {
+            padding: 20px 60px;
+            font-size: 2em;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 0 30px #fff;
+            transition: 0.3s;
+        }
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 50px #fff;
+        }
+        #result {
+            font-size: 5em;
+            margin: 50px;
+            min-height: 150px;
+        }
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 15px #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>РАМОН СЫН ШЛЮХИ?</h1>
+    <div class="wheel-container">
+        <div class="arrow">▼</div>
+        <div id="wheel">
+            <div class="label-yes">ДА</div>
+            <div class="label-no">НЕТ</div>
+        </div>
+    </div>
+    <button id="spin-btn">КРУТИТЬ</button>
+    <div id="result"></div>
+    <div class="cursor"></div>
+
+    <script>
+        // Курсор
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', e => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            cursor.style.transform = 'translate(-50%, -50%)';
+        });
+
+        const wheel = document.getElementById('wheel');
+        const result = document.getElementById('result');
+        const btn = document.getElementById('spin-btn');
+
+        btn.onclick = function() {
+            btn.style.display = 'none'; // Только 1 раз
+
+            result.innerHTML = '';
+
+            const spins = 8 + Math.floor(Math.random() * 5);
+            const extra = Math.random() * 360;
+            const total = spins * 360 + extra;
+            wheel.style.transform = `rotate(${total}deg)`;
+
+            const isYes = Math.random() < 0.99;
+
+            setTimeout(() => {
+                result.innerHTML = isYes ? "ДА" : "НЕТ";
+                result.style.color = isYes ? "#00ff00" : "#ff0000";
+            }, 4000);
+        };
+    </script>
+</body>
+</html>
