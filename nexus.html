@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        body { background-color: #0b0e11; color: #e9edef; font-family: sans-serif; }
+        .glass { background: #181c22; border: 1px solid rgba(255,255,255,0.05); }
+        .msg-mine { background: #005c4b; align-self: flex-end; border-radius: 10px 10px 0 10px; }
+        .msg-their { background: #202c33; align-self: flex-start; border-radius: 10px 10px 10px 0; }
+    </style>
+</head>
+<body class="h-screen flex items-center justify-center">
+
+    <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#0b0e11]">
+        <div class="w-full max-w-xs p-6 text-center">
+            <h1 class="text-4xl font-bold mb-8 text-white">Nexus</h1>
+            <input id="username" type="text" placeholder="Ваш ник" class="w-full bg-[#202c33] p-4 rounded-lg mb-4 outline-none border-b-2 border-transparent focus:border-blue-500">
+            <button id="login-btn" class="w-full bg-blue-600 p-4 rounded-lg font-bold hover:bg-blue-700">Войти</button>
+            <p id="status-msg" class="text-xs mt-4 text-gray-500"></p>
+        </div>
+    </div>
+
+    <div id="app" class="hidden w-full h-full flex">
+        <aside class="w-72 border-r border-white/5 flex flex-col bg-[#111b21]">
+            <div class="p-4 flex justify-between items-center bg-[#202c33]">
+                <span id="my-name" class="font-bold text-blue-400"></span>
+                <button onclick="startSearch()" class="text-xl">➕</button>
+            </div>
+            <div id="contacts" class="flex-1 overflow-y-auto"></div>
+        </aside>
+
+        <main class="flex-1 flex flex-col relative">
+            <header id="chat-header" class="p-4 bg-[#202c33] hidden justify-between items-center">
+                <span id="active-user" class="font-bold"></span>
+                <div class="flex gap-4">
+                    <button onclick="makeCall('audio')">📞</button>
+                    <button onclick="makeCall('video')">📹</button>
+                </div>
+            </header>
+
+            <div id="messages" class="flex-1 overflow-y-auto p-4 flex flex-col gap-2 bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] bg-repeat">
+            </div>
+
+            <div class="p-4 bg-[#202c33]">
+                <div class="flex gap-2">
+                    <input id="msg-input" type="text" placeholder="Сообщение" class="flex-1 bg-[#2a3942] p-3 rounded-lg outline-none text-white">
+                    <button id="send-btn" class="bg-blue-600 px-6 rounded-lg">➤</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBCCMox8AjDNFcsqDvrrSD_uBofbCcvZJY",
+            authDomain: "nexuschat-84243.firebaseapp.com",
+            projectId: "nexuschat-84243",
+            storageBucket: "nexuschat-84243.firebasestorage.app",
+            messagingSenderId: "145066619214",
+            appId: "1:145066619214:web:81f1608426e58bddfaae1f",
+            measurementId: "G-G1YKST2GFV"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        let myNick = "";
+        let targetNick = "";
+
+        // LOGIN LOGIC
+        document.getElementById('login-btn').onclick = async () => {
+            const user = document.getElementById('username').value.trim().toLowerCase();
+            if(user.length < 2) return alert("Ник слишком короткий");
+
+            document.getElementById('status-msg').innerText = "Подключение к базе...";
+            
+            try {
+                const userRef = doc(db, "users", user);
+                const userSnap = await getDoc(userRef);
+
+                if(!userSnap.exists()) {
+                    await setDoc(userRef, { username: user, online: true });
+                }
+
+                myNick = user;
+                document.getElementById('my-name').innerText = user;
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('app').classList.remove('hidden');
+            } catch (e) {
+                alert("Ошибка! Проверьте Rules в Firebase: " + e.message);
+            }
+        };
+
+        // SEARCH
+        window.startSearch = async () => {
+            const search = prompt("Ник друга:").toLowerCase();
+            if(!search || search === myNick) return;
+            
+            const snap = await getDoc(doc(db, "users", search));
+            if(snap.exists()) {
+                targetNick = search;
+                document.getElementById('chat-header').style.display = 'flex';
+                document.getElementById('active-user').innerText = search;
+                loadMessages();
+            } else {
+                alert("Юзер не найден");
+            }
+        };
+
+        // SEND
+        document.getElementById('send-btn').onclick = async () => {
+            const text = document.getElementById('msg-input').value;
+            if(!text || !targetNick) return;
+
+            await addDoc(collection(db, "messages"), {
+                from: myNick,
+                to: targetNick,
+                text: text,
+                time: serverTimestamp()
+            });
+            document.getElementById('msg-input').value = "";
+        };
+
+        // LOAD
+        function loadMessages() {
+            const q = query(collection(db, "messages"), orderBy("time", "asc"));
+            onSnapshot(q, (snap) => {
+                const box = document.getElementById('messages');
+                box.innerHTML = "";
+                snap.forEach(d => {
+                    const m = d.data();
+                    if((m.from === myNick && m.to === targetNick) || (m.from === targetNick && m.to === myNick)) {
+                        const div = document.createElement('div');
+                        div.className = `p-2 px-4 max-w-[80%] ${m.from === myNick ? 'msg-mine' : 'msg-their'}`;
+                        div.innerText = m.text;
+                        box.appendChild(div);
+                    }
+                });
+                box.scrollTop = box.scrollHeight;
+            });
+        }
+    </script>
+</body>
+</html>
